@@ -8,10 +8,65 @@ class ExpenseManager
     @expenses = []
     @categories = []
     @payment_methods = []
-    @users = []  
+    @users = []
   end
 
-  def add_user(name)
+  def run
+    loop do
+      show_main_menu
+      choice = gets.chomp.to_i
+      case choice
+      when 1 then manage_users
+      when 2 then manage_categories
+      when 3 then manage_payment_methods
+      when 4 then manage_expenses
+      when 5 then generate_reports
+      when 6 then save_data
+      when 7 then load_data
+      when 8 then break
+      else puts "Невірний вибір. Спробуйте ще раз."
+      end
+    end
+  end
+
+  # ======== КЕРУВАННЯ КОРИСТУВАЧАМИ ========
+  def manage_users
+    loop do
+      puts "\nКерування користувачами:"
+      puts "1. Додати користувача"
+      puts "2. Переглянути користувачів"
+      puts "3. Редагувати користувача"
+      puts "4. Видалити користувача"
+      puts "5. Назад"
+      print "Оберіть опцію: "
+      
+      case gets.chomp.to_i
+      when 1
+        add_user
+      when 2
+        view_users
+      when 3
+        edit_user
+      when 4
+        delete_user
+      when 5 then break
+      else puts "Невірний вибір."
+      end
+    end
+  end
+  
+  def add_user
+    print "Введіть ім'я користувача: "
+    name = gets.chomp.strip
+    begin
+      added_user = add_user_internal(name)
+      puts "Користувача '#{added_user}' додано."
+    rescue => e
+      puts "Помилка: #{e.message}"
+    end
+  end
+  
+  def add_user_internal(name)
     name = name.strip
     if name.empty?
       raise "Ім'я користувача відсутнє"
@@ -22,8 +77,41 @@ class ExpenseManager
       return name
     end
   end
-
-  def edit_user(index, new_name)
+  
+  def view_users
+    list_items("Користувачі", @users)
+    puts "Натисніть Enter, щоб продовжити..."
+    gets
+  end
+  
+  def edit_user
+    list_items("Користувачі", @users)
+    
+    if @users.empty?
+      puts "Немає користувачів для редагування."
+      return
+    end
+    
+    print "Введіть індекс користувача для редагування: "
+    index = gets.chomp.to_i
+    
+    if index < 0 || index >= @users.size
+      puts "Невірний індекс користувача."
+      return
+    end
+    
+    print "Введіть нове ім'я для користувача \"#{@users[index]}\": "
+    new_name = gets.chomp.strip
+    
+    begin
+      result = edit_user_internal(index, new_name)
+      puts result
+    rescue => e
+      puts "Помилка: #{e.message}"
+    end
+  end
+  
+  def edit_user_internal(index, new_name)
     new_name = new_name.strip
     
     if index < 0 || index >= @users.size
@@ -48,7 +136,37 @@ class ExpenseManager
     end
   end
   
-  def delete_user(index)
+  def delete_user
+    list_items("Користувачі", @users)
+    
+    if @users.empty?
+      puts "Немає користувачів для видалення."
+      return
+    end
+    
+    print "Введіть індекс для видалення: "
+    index = gets.chomp.to_i
+    
+    begin
+      user_name = @users[index]
+      
+      # Перевіряємо чи користувач має витрати
+      expenses_with_user = @expenses.select { |e| e[:user] == user_name }
+      
+      if !expenses_with_user.empty?
+        puts "Увага! Користувач має #{expenses_with_user.size} витрат."
+        print "Операція видалення неможлива. Змініть власника витрат перед видаленням користувача."
+        return
+      end
+      
+      result = delete_user_internal(index)
+      puts "Користувача '#{result}' видалено."
+    rescue => e
+      puts "Помилка: #{e.message}"
+    end
+  end
+  
+  def delete_user_internal(index)
     if index < 0 || index >= @users.size
       raise "Невірний індекс користувача."
     end
@@ -62,37 +180,73 @@ class ExpenseManager
     end
     
     @users.delete_at(index)
-    return "Користувача '#{user_name}' видалено"
+    return user_name
   end
   
-  def view_users
-    @users.each_with_index.map { |item, i| "#{i}. #{item}" }
+  # ======== КЕРУВАННЯ КАТЕГОРІЯМИ ========
+  def manage_categories
+    loop do
+      puts "\nКерування категоріями:"
+      puts "1. Додати категорію"
+      puts "2. Переглянути категорії"
+      puts "3. Редагувати категорію"
+      puts "4. Видалити категорію"
+      puts "5. Назад"
+      print "Оберіть опцію: "
+      
+      case gets.chomp.to_i
+      when 1
+        add_category
+      when 2
+        view_categories
+      when 3
+        edit_category
+      when 4
+        delete_category
+      when 5 then break
+      else puts "Невірний вибір."
+      end
+    end
   end
-
-  # Методи управління категоріями
-  def add_category(name)
-    name = name.strip
+  
+  def add_category
+    print "Введіть назву категорії: "
+    name = gets.chomp.strip
     if name.empty? || @categories.include?(name)
-      raise "Недійсна або вже існуюча категорія."
+      puts "Недійсна або вже існуюча категорія."
     else
       @categories << name
-      return name
+      puts "Категорію додано."
     end
   end
   
   def view_categories
-    @categories.each_with_index.map { |item, i| "#{i}. #{item}" }
+    list_items("Категорії", @categories)
+    puts "Натисніть Enter, щоб продовжити..."
+    gets
   end
   
-  def edit_category(index, new_name)
-    new_name = new_name.strip
+  def edit_category
+    list_items("Категорії", @categories)
     
-    if index < 0 || index >= @categories.size
-      raise "Невірний індекс."
+    if @categories.empty?
+      puts "Немає категорій для редагування."
+      return
     end
     
+    print "Введіть індекс категорії для редагування: "
+    index = gets.chomp.to_i
+    
+    if index < 0 || index >= @categories.size
+      puts "Невірний індекс."
+      return
+    end
+    
+    print "Введіть нову назву для категорії \"#{@categories[index]}\": "
+    new_name = gets.chomp.strip
+    
     if new_name.empty? || (@categories.include?(new_name) && @categories[index] != new_name)
-      raise "Недійсна або вже існуюча категорія."
+      puts "Недійсна або вже існуюча категорія."
     else
       old_name = @categories[index]
       @categories[index] = new_name
@@ -102,55 +256,113 @@ class ExpenseManager
         expense[:categories].map! { |cat| cat == old_name ? new_name : cat }
       end
       
-      return new_name
+      puts "Категорію оновлено."
     end
   end
   
-  def delete_category(index)
-    if index < 0 || index >= @categories.size
-      raise "Невірний індекс."
+  def delete_category
+    list_items("Категорії", @categories)
+    
+    if @categories.empty?
+      puts "Немає категорій для видалення."
+      return
     end
     
-    category_name = @categories[index]
+    print "Введіть індекс для видалення: "
+    i = gets.chomp.to_i
     
-    # Перевіряємо чи категорія використовується у витратах
-    expenses_with_category = @expenses.select { |e| e[:categories].include?(category_name) }
-    
-    if !expenses_with_category.empty?
-      # Видаляємо категорію з усіх витрат
-      @expenses.each do |expense|
-        expense[:categories].delete(category_name)
+    if i >= 0 && i < @categories.size
+      category_name = @categories[i]
+      
+      # Перевіряємо чи категорія використовується у витратах
+      expenses_with_category = @expenses.select { |e| e[:categories].include?(category_name) }
+      
+      if !expenses_with_category.empty?
+        puts "Увага! Категорія використовується у #{expenses_with_category.size} витратах."
+        print "Все одно видалити? (т/н): "
+        
+        if gets.chomp.downcase != 'т'
+          puts "Видалення скасовано."
+          return
+        end
+        
+        # Видаляємо категорію з усіх витрат
+        @expenses.each do |expense|
+          expense[:categories].delete(category_name)
+        end
       end
+      
+      @categories.delete_at(i)
+      puts "Категорія '#{category_name}' видалена."
+    else
+      puts "Невірний індекс."
     end
-    
-    @categories.delete_at(index)
-    return category_name
   end
 
-  # Методи управління способами оплати
-  def add_payment_method(name)
-    name = name.strip
+  # ======== КЕРУВАННЯ СПОСОБАМИ ОПЛАТИ ========
+  def manage_payment_methods
+    loop do
+      puts "\nКерування способами оплати:"
+      puts "1. Додати спосіб оплати"
+      puts "2. Переглянути способи оплати"
+      puts "3. Редагувати спосіб оплати"
+      puts "4. Видалити спосіб оплати"
+      puts "5. Назад"
+      print "Оберіть опцію: "
+      
+      case gets.chomp.to_i
+      when 1
+        add_payment_method
+      when 2
+        view_payment_methods
+      when 3
+        edit_payment_method
+      when 4
+        delete_payment_method
+      when 5 then break
+      else puts "Невірний вибір."
+      end
+    end
+  end
+  
+  def add_payment_method
+    print "Введіть назву способу оплати: "
+    name = gets.chomp.strip
     if name.empty? || @payment_methods.include?(name)
-      raise "Недійсний або вже існуючий спосіб."
+      puts "Недійсний або вже існуючий спосіб."
     else
       @payment_methods << name
-      return name
+      puts "Спосіб оплати додано."
     end
   end
   
   def view_payment_methods
-    @payment_methods.each_with_index.map { |item, i| "#{i}. #{item}" }
+    list_items("Способи оплати", @payment_methods)
+    puts "Натисніть Enter, щоб продовжити..."
+    gets
   end
   
-  def edit_payment_method(index, new_name)
-    new_name = new_name.strip
+  def edit_payment_method
+    list_items("Способи оплати", @payment_methods)
     
-    if index < 0 || index >= @payment_methods.size
-      raise "Невірний індекс."
+    if @payment_methods.empty?
+      puts "Немає способів оплати для редагування."
+      return
     end
     
+    print "Введіть індекс способу оплати для редагування: "
+    index = gets.chomp.to_i
+    
+    if index < 0 || index >= @payment_methods.size
+      puts "Невірний індекс."
+      return
+    end
+    
+    print "Введіть нову назву для способу оплати \"#{@payment_methods[index]}\": "
+    new_name = gets.chomp.strip
+    
     if new_name.empty? || (@payment_methods.include?(new_name) && @payment_methods[index] != new_name)
-      raise "Недійсний або вже існуючий спосіб оплати."
+      puts "Недійсний або вже існуючий спосіб оплати."
     else
       old_name = @payment_methods[index]
       @payment_methods[index] = new_name
@@ -160,160 +372,305 @@ class ExpenseManager
         expense[:payment_methods].map! { |pm| pm == old_name ? new_name : pm }
       end
       
-      return new_name
+      puts "Спосіб оплати оновлено."
     end
   end
   
-  def delete_payment_method(index)
-    if index < 0 || index >= @payment_methods.size
-      raise "Невірний індекс."
+  def delete_payment_method
+    list_items("Способи оплати", @payment_methods)
+    
+    if @payment_methods.empty?
+      puts "Немає способів оплати для видалення."
+      return
     end
     
-    payment_method_name = @payment_methods[index]
+    print "Введіть індекс для видалення: "
+    i = gets.chomp.to_i
     
-    # Перевіряємо чи спосіб оплати використовується у витратах
-    expenses_with_payment = @expenses.select { |e| e[:payment_methods].include?(payment_method_name) }
-    
-    if !expenses_with_payment.empty?
-      # Видаляємо спосіб оплати з усіх витрат
-      @expenses.each do |expense|
-        expense[:payment_methods].delete(payment_method_name)
+    if i >= 0 && i < @payment_methods.size
+      payment_method_name = @payment_methods[i]
+      
+      # Перевіряємо чи спосіб оплати використовується у витратах
+      expenses_with_payment = @expenses.select { |e| e[:payment_methods].include?(payment_method_name) }
+      
+      if !expenses_with_payment.empty?
+        puts "Увага! Спосіб оплати використовується у #{expenses_with_payment.size} витратах."
+        print "Все одно видалити? (т/н): "
+        
+        if gets.chomp.downcase != 'т'
+          puts "Видалення скасовано."
+          return
+        end
+        
+        # Видаляємо спосіб оплати з усіх витрат
+        @expenses.each do |expense|
+          expense[:payment_methods].delete(payment_method_name)
+        end
       end
+      
+      @payment_methods.delete_at(i)
+      puts "Спосіб оплати '#{payment_method_name}' видалено."
+    else
+      puts "Невірний індекс."
     end
-    
-    @payment_methods.delete_at(index)
-    return payment_method_name
   end
 
-  # Методи управління витратами
-  def add_expense(amount, categories_indices, payment_methods_indices, date, description, user_index)
-    if @categories.empty? || @payment_methods.empty?
-      raise "Спочатку створіть принаймні одну категорію і спосіб оплати."
+  # ======== КЕРУВАННЯ ВИТРАТАМИ ========
+  def manage_expenses
+    loop do
+      puts "\nКерування витратами:"
+      puts "1. Додати витрату"
+      puts "2. Переглянути витрати"
+      puts "3. Редагувати витрату"
+      puts "4. Видалити витрату"
+      puts "5. Назад"
+      print "Оберіть опцію: "
+      
+      case gets.chomp.to_i
+      when 1
+        add_expense
+      when 2
+        view_expenses
+      when 3
+        edit_expense
+      when 4
+        delete_expense
+      when 5 then break
+      else puts "Невірний вибір."
+      end
     end
-
+  end
+  
+  def add_expense
+    if @categories.empty? || @payment_methods.empty?
+      puts "Спочатку створіть принаймні одну категорію і спосіб оплати."
+      return
+    end
+    
     # Перевіряємо чи є користувачі
     if @users.empty?
-      raise "Спочатку додайте користувача."
+      puts "Спочатку додайте користувача."
+      return
     end
 
-    if user_index < 0 || user_index >= @users.size
-      raise "Невірний індекс користувача."
-    end
+    amount = get_amount
+    categories_indices = select_indices("категорії", @categories)
+    payment_indices = select_indices("способи оплати", @payment_methods)
+    date = get_date
+    description = get_description
+    user_index = select_user()
 
-    selected_user = @users[user_index]
-
-    # Валідуємо значення
-    unless amount.is_a?(Numeric) || (amount.is_a?(String) && amount =~ /^\d+(\.\d+)?$/)
-      raise "Невірна сума!"
+    begin
+      selected_categories = categories_indices.map { |i| @categories[i] }.compact
+      selected_payments = payment_indices.map { |i| @payment_methods[i] }.compact
+      
+      expense = {
+        amount: amount,
+        categories: selected_categories,
+        payment_methods: selected_payments,
+        date: date,
+        description: description,
+        user: @users[user_index]
+      }
+      
+      @expenses << expense
+      puts "Витрату успішно додано!"
+    rescue => e
+      puts "Помилка: #{e.message}"
     end
-    amount = amount.to_f
-    
-    # Валідуємо дату
-    unless date =~ /^\d{4}-\d{2}-\d{2}$/
-      raise "Невірний формат дати!"
+  end
+  
+  def select_user
+    list_items("Користувачі", @users)
+    loop do
+      print "Виберіть користувача (введіть індекс): "
+      index = gets.chomp.to_i
+      if index >= 0 && index < @users.size
+        return index
+      else
+        puts "Невірний індекс користувача. Спробуйте ще раз."
+      end
     end
-    
-    # Вибрані категорії
-    selected_categories = categories_indices.map { |i| @categories[i] }.compact
-    if selected_categories.empty?
-      raise "Не обрано жодної категорії."
-    end
-    
-    # Вибрані способи оплати
-    selected_payments = payment_methods_indices.map { |i| @payment_methods[i] }.compact
-    if selected_payments.empty?
-      raise "Не обрано жодного способу оплати."
-    end
-
-    expense = {
-      amount: amount,
-      categories: selected_categories,
-      payment_methods: selected_payments,
-      date: date,
-      description: description,
-      user: selected_user  # Додаємо користувача до витрати
-    }
-    
-    @expenses << expense
-    return expense
   end
   
   def view_expenses
-    @expenses.each_with_index.map do |exp, i|
-      {
-        index: i,
-        date: exp[:date],
-        description: exp[:description],
-        amount: exp[:amount],
-        categories: exp[:categories],
-        payment_methods: exp[:payment_methods],
-        user: exp[:user]  # Додаємо користувача до результату
-      }
+    if @expenses.empty?
+      puts "Список витрат порожній."
+    else
+      puts "\nВитрати:"
+      @expenses.each_with_index do |exp, i|
+        puts "#{i}. [#{exp[:date]}] #{exp[:description]} - #{exp[:amount]}₴"
+        puts "   Користувач: #{exp[:user] || 'Не вказано'}"
+        puts "   Категорії: #{exp[:categories].join(', ')}"
+        puts "   Способи оплати: #{exp[:payment_methods].join(', ')}"
+      end
     end
+    puts "Натисніть Enter, щоб продовжити..."
+    gets
   end
   
-  def edit_expense(index, field, new_value)
+  def edit_expense
+    view_expenses
+    
+    if @expenses.empty?
+      puts "Немає витрат для редагування."
+      return
+    end
+    
+    print "Введіть індекс витрати для редагування: "
+    index = gets.chomp.to_i
+    
     if index < 0 || index >= @expenses.size
-      raise "Невірний індекс."
+      puts "Невірний індекс."
+      return
     end
     
     expense = @expenses[index]
     
-    case field
-    when :amount
-      unless new_value.is_a?(Numeric) || (new_value.is_a?(String) && new_value =~ /^\d+(\.\d+)?$/)
-        raise "Невірна сума!"
-      end
-      expense[:amount] = new_value.to_f
-      
-    when :categories
-      # Очікується масив індексів
-      selected_categories = new_value.map { |i| @categories[i] }.compact
-      if selected_categories.empty?
-        raise "Не обрано жодної категорії."
-      end
-      expense[:categories] = selected_categories
-      
-    when :payment_methods
-      # Очікується масив індексів
-      selected_payments = new_value.map { |i| @payment_methods[i] }.compact
-      if selected_payments.empty?
-        raise "Не обрано жодного способу оплати."
-      end
-      expense[:payment_methods] = selected_payments
-      
-    when :date
-      unless new_value =~ /^\d{4}-\d{2}-\d{2}$/
-        raise "Невірний формат дати!"
-      end
-      expense[:date] = new_value
-      
-    when :description
-      expense[:description] = new_value.to_s
+    puts "\nРедагування витрати:"
+    puts "1. Сума (поточна: #{expense[:amount]}₴)"
+    puts "2. Категорії (поточні: #{expense[:categories].join(', ')})"
+    puts "3. Способи оплати (поточні: #{expense[:payment_methods].join(', ')})" 
+    puts "4. Дата (поточна: #{expense[:date]})"
+    puts "5. Опис (поточний: #{expense[:description]})"
+    puts "6. Користувач (поточний: #{expense[:user] || 'Не вказано'})"
+    puts "7. Редагувати все"
+    puts "8. Відмінити редагування"
+    print "Оберіть, що редагувати: "
     
-    when :user
-      if new_value < 0 || new_value >= @users.size
-        raise "Невірний індекс користувача."
-      end
-      expense[:user] = @users[new_value]
-      
+    choice = gets.chomp.to_i
+    
+    case choice
+    when 1
+      expense[:amount] = get_amount
+      puts "Суму оновлено."
+    when 2
+      categories_indices = select_indices("категорії", @categories)
+      expense[:categories] = categories_indices.map { |i| @categories[i] }.compact
+      puts "Категорії оновлено."
+    when 3
+      payment_indices = select_indices("способи оплати", @payment_methods)
+      expense[:payment_methods] = payment_indices.map { |i| @payment_methods[i] }.compact
+      puts "Способи оплати оновлено."
+    when 4
+      expense[:date] = get_date
+      puts "Дату оновлено."
+    when 5
+      expense[:description] = get_description
+      puts "Опис оновлено."
+    when 6
+      user_index = select_user
+      expense[:user] = @users[user_index]
+      puts "Користувача оновлено."
+    when 7
+      expense[:amount] = get_amount
+      categories_indices = select_indices("категорії", @categories)
+      expense[:categories] = categories_indices.map { |i| @categories[i] }.compact
+      payment_indices = select_indices("способи оплати", @payment_methods)
+      expense[:payment_methods] = payment_indices.map { |i| @payment_methods[i] }.compact
+      expense[:date] = get_date
+      expense[:description] = get_description
+      user_index = select_user
+      expense[:user] = @users[user_index]
+      puts "Всі дані витрати оновлено."
+    when 8
+      puts "Редагування скасовано."
     else
-      raise "Невідоме поле для редагування."
+      puts "Невірний вибір."
     end
-    
-    return expense
   end
   
-  def delete_expense(index)
-    if index < 0 || index >= @expenses.size
-      raise "Невірний індекс."
+  def delete_expense
+    view_expenses
+    
+    if @expenses.empty?
+      puts "Немає витрат для видалення."
+      return
     end
     
-    deleted_expense = @expenses.delete_at(index)
-    return deleted_expense
+    print "Введіть індекс витрати для видалення: "
+    index = gets.chomp.to_i
+    
+    if index < 0 || index >= @expenses.size
+      puts "Невірний індекс."
+      return
+    end
+    
+    expense = @expenses[index]
+    puts "Ви дійсно хочете видалити витрату:"
+    puts "[#{expense[:date]}] #{expense[:description]} - #{expense[:amount]}₴"
+    puts "Користувач: #{expense[:user] || 'Не вказано'}"
+    print "Підтвердити видалення? (т/н): "
+    
+    if gets.chomp.downcase == 'т'
+      @expenses.delete_at(index)
+      puts "Витрату видалено."
+    else
+      puts "Видалення скасовано."
+    end
   end
 
-  # Функція пошуку витрат за користувачем
+  # ======== ЗВІТИ ========
+  def generate_reports
+    loop do
+      puts "\nЗвіти:"
+      puts "1. Витрати за користувачем"
+      puts "2. Загальна сума витрат за користувачем"
+      puts "3. Всі витрати"
+      puts "4. Назад"
+      print "Оберіть опцію: "
+      
+      case gets.chomp.to_i
+      when 1
+        find_expenses_by_user_menu
+      when 2
+        total_expenses_by_user_menu
+      when 3
+        view_expenses
+      when 4 then break
+      else puts "Невірний вибір."
+      end
+    end
+  end
+  
+  def find_expenses_by_user_menu
+    list_items("Користувачі", @users)
+    
+    if @users.empty?
+      puts "Немає користувачів у системі."
+      return
+    end
+    
+    print "Введіть індекс користувача: "
+    index = gets.chomp.to_i
+    
+    if index < 0 || index >= @users.size
+      puts "Невірний індекс користувача."
+      return
+    end
+    
+    user_name = @users[index]
+    result = find_expenses_by_user(user_name)
+    
+    if result.is_a?(String)
+      puts result
+    else
+      puts "\nВитрати користувача #{user_name}:"
+      if result.empty?
+        puts "Витрат не знайдено."
+      else
+        result.each do |exp|
+          puts "#{exp[:index]}. [#{exp[:date]}] #{exp[:description]} - #{exp[:amount]}₴"
+          puts "   Категорії: #{exp[:categories].join(', ')}"
+          puts "   Способи оплати: #{exp[:payment_methods].join(', ')}"
+        end
+      end
+    end
+    
+    puts "Натисніть Enter, щоб продовжити..."
+    gets
+  end
+  
   def find_expenses_by_user(user_name)
     # Перевіряємо чи існує такий користувач
     unless @users.include?(user_name)
@@ -338,7 +695,37 @@ class ExpenseManager
     end
   end
   
-  # Функція для отримання загальної суми витрат за користувачем
+  def total_expenses_by_user_menu
+    list_items("Користувачі", @users)
+    
+    if @users.empty?
+      puts "Немає користувачів у системі."
+      return
+    end
+    
+    print "Введіть індекс користувача: "
+    index = gets.chomp.to_i
+    
+    if index < 0 || index >= @users.size
+      puts "Невірний індекс користувача."
+      return
+    end
+    
+    user_name = @users[index]
+    result = total_expenses_by_user(user_name)
+    
+    if result.is_a?(String)
+      puts result
+    else
+      puts "\nЗагальні витрати користувача #{result[:user]}:"
+      puts "Кількість витрат: #{result[:expenses_count]}"
+      puts "Загальна сума: #{result[:total_expenses]}₴"
+    end
+    
+    puts "Натисніть Enter, щоб продовжити..."
+    gets
+  end
+  
   def total_expenses_by_user(user_name)
     unless @users.include?(user_name)
       return "Користувача '#{user_name}' не знайдено."
@@ -357,10 +744,30 @@ class ExpenseManager
     end
   end
 
-  # Методи збереження/завантаження даних
-  def save_data(filename, format = :json)
+  # ======== ЗБЕРЕЖЕННЯ І ЗАВАНТАЖЕННЯ ДАНИХ ========
+  def save_data
+    puts "\nФормат файлу:"
+    puts "1. JSON"
+    puts "2. YAML"
+    print "Оберіть формат: "
+    format = gets.chomp.to_i
+
+    print "Введіть ім'я файлу (без розширення): "
+    filename_base = gets.chomp
+
+    format_sym = format == 2 ? :yaml : :json
+    
+    begin
+      saved_file = save_data_internal(filename_base, format_sym)
+      puts "Дані збережено у #{saved_file}"
+    rescue => e
+      puts "Помилка при збереженні: #{e.message}"
+    end
+  end
+  
+  def save_data_internal(filename, format = :json)
     data = {
-      users: @users,  
+      users: @users,
       expenses: @expenses,
       categories: @categories,
       payment_methods: @payment_methods
@@ -389,7 +796,31 @@ class ExpenseManager
     return filename
   end
 
-  def load_data(filename)
+  def load_data
+    puts "\nФормат файлу:"
+    puts "1. JSON"
+    puts "2. YAML"
+    print "Оберіть формат: "
+    format = gets.chomp.to_i
+
+    print "Введіть ім'я файлу (без розширення): "
+    filename_base = gets.chomp
+
+    filename = case format
+              when 2 then "#{filename_base}.yaml"
+              else "#{filename_base}.json"
+              end
+              
+    begin
+      stats = load_data_internal(filename)
+      puts "Дані успішно завантажено!"
+      puts "Завантажено: #{stats[:users]} користувачів, #{stats[:expenses]} витрат, #{stats[:categories]} категорій, #{stats[:payment_methods]} способів оплати"
+    rescue => e
+      puts "Помилка при завантаженні: #{e.message}"
+    end
+  end
+  
+  def load_data_internal(filename)
     unless File.exist?(filename)
       raise "Файл не знайдено: #{filename}"
     end
@@ -408,7 +839,7 @@ class ExpenseManager
              YAML.load_file(filename)
            end
 
-    @users = data[:users] || []  
+    @users = data[:users] || []
     @expenses = data[:expenses] || []
     @categories = data[:categories] || []
     @payment_methods = data[:payment_methods] || []
@@ -420,48 +851,38 @@ class ExpenseManager
       payment_methods: @payment_methods.size
     }
   end
+
+  private
+
+  def show_main_menu
+    puts "\nГоловне меню:"
+    puts "1. Керування користувачами"
+    puts "2. Керування категоріями"
+    puts "3. Керування способами оплати"
+    puts "4. Керування витратами"
+    puts "5. Звіти"
+    puts "6. Зберегти дані"
+    puts "7. Завантажити дані"
+    puts "8. Вийти"
+    print "Оберіть опцію: "
+  end
+
+  def select_from_list(label, list)
+    puts "Оберіть #{label} (через кому, індекси):"
+    list.each_with_index { |item, i| puts "#{i}. #{item}" }
+    indices = gets.chomp.split(',').map(&:strip).map(&:to_i)
+    selected = indices.map { |i| list[i] }.compact
+    selected.empty? ? (puts "Не обрано жодного. Спробуйте ще раз."; select_from_list(label, list)) : selected
+  end
+
+  def list_items(label, list)
+    puts "\n#{label}:"
+    if list.empty?
+      puts "Список порожній."
+    else
+      list.each_with_index { |item, i| puts "#{i}. #{item}" }
+    end
+  end
 end
 
-
-manager = ExpenseManager.new
-
-manager.add_user("Іван Петренко")
-manager.add_user("Марія Коваленко")
-manager.add_user("Петро Іваненко")
-puts "Користувачі:"
-puts manager.view_users
-
-manager.add_category("Продукти")
-manager.add_category("Транспорт")
-manager.add_category("Розваги")
-
-manager.add_payment_method("Готівка")
-manager.add_payment_method("Кредитна картка")
-
-puts "Категорії:"
-puts manager.view_categories
-
-manager.add_expense(125.50, [0, 2], [1], "2025-05-16", "Вечеря в ресторані", 0)
-
-manager.add_expense(50.0, [1], [0], "2025-05-17", "Проїзд в таксі", 1)
-
-manager.add_expense(200.0, [0], [1], "2025-05-18", "Покупки в супермаркеті", 0)
-
-puts "Витрати:"
-p manager.view_expenses
-
-puts "Витрати Івана:"
-p manager.find_expenses_by_user("Іван Петренко")
-
-puts "Загальна сума витрат Івана:"
-p manager.total_expenses_by_user("Іван Петренко")
-
-manager.edit_expense(1, :user, 2)  
-
-puts "Витрати після редагування:"
-p manager.view_expenses
-
-manager.save_data("my_expenses", :json)
-
-loaded_data = manager.load_data("my_expenses.json")
-puts "Завантажено дані: #{loaded_data}"
+ExpenseManager.new.run
