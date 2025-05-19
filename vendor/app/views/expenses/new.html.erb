@@ -1,0 +1,11 @@
+<div class="card">
+  <div class="card-header">
+    <h1>Нова витрата</h1>
+  </div>
+  <div class="card-body">
+    <%= render 'form', expense: @expense %>
+  </div>
+  <div class="card-footer">
+    <%= link_to "Назад", expenses_path, class: "btn btn-secondary" %>
+  </div>
+</div>

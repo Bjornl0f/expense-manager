@@ -1,0 +1,21 @@
+<%= form_with(model: spender) do |form| %>
+  <% if spender.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(spender.errors.count, "помилка") %> при збереженні:</h2>
+      <ul>
+        <% spender.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, "Ім'я", class: "form-label" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Зберегти", class: "btn btn-primary" %>
+  </div>
+<% end %>
