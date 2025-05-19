@@ -1,0 +1,378 @@
+  [1m[35m (62.9ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.6ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-05-13 19:37:15.149705', '2025-05-13 19:37:15.149720') RETURNING "key" /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+Migrating to CreateCategories (20250513184856)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (14.1ms)[0m  [1m[35mCREATE TABLE "categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250513184856') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+Migrating to CreatePaymentMethods (20250513185424)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (14.5ms)[0m  [1m[35mCREATE TABLE "payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250513185424') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+Migrating to CreateExpenses (20250513185453)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (13.5ms)[0m  [1m[35mCREATE TABLE "expenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250513185453') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+Migrating to CreateExpenseCategories (20250513193449)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (16.8ms)[0m  [1m[35mCREATE TABLE "expense_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_10ea622141"
+FOREIGN KEY ("expense_id")
+  REFERENCES "expenses" ("id")
+, CONSTRAINT "fk_rails_3a19ecf141"
+FOREIGN KEY ("category_id")
+  REFERENCES "categories" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_expense_id" ON "expense_categories" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_category_id" ON "expense_categories" ("category_id") /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250513193449') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+Migrating to CreateExpensePaymentMethods (20250513193527)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (18.4ms)[0m  [1m[35mCREATE TABLE "expense_payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "payment_method_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_80a16696a5"
+FOREIGN KEY ("expense_id")
+  REFERENCES "expenses" ("id")
+, CONSTRAINT "fk_rails_24b4df27eb"
+FOREIGN KEY ("payment_method_id")
+  REFERENCES "payment_methods" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_expense_id" ON "expense_payment_methods" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_payment_method_id" ON "expense_payment_methods" ("payment_method_id") /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250513193527') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (2.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Create (0.4ms)[0m  [1m[32mINSERT INTO "categories" ("name", "created_at", "updated_at") VALUES ('Їжа', '2025-05-13 19:54:22.880057', '2025-05-13 19:54:22.880057') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (171.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Транспорт' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (2.0ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Транспорт' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Create (0.3ms)[0m  [1m[32mINSERT INTO "categories" ("name", "created_at", "updated_at") VALUES ('Транспорт', '2025-05-13 19:55:00.503291', '2025-05-13 19:55:00.503291') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = '' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (1.6ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Create (0.3ms)[0m  [1m[32mINSERT INTO "payment_methods" ("name", "created_at", "updated_at") VALUES ('Готівка', '2025-05-13 19:56:01.689381', '2025-05-13 19:56:01.689381') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Картка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (1.6ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Картка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Create (0.3ms)[0m  [1m[32mINSERT INTO "payment_methods" ("name", "created_at", "updated_at") VALUES ('Картка', '2025-05-13 19:56:30.358906', '2025-05-13 19:56:30.358906') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" IS NULL AND "expense_categories"."category_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' AND "categories"."id" != 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_payment_methods" WHERE "expense_payment_methods"."expense_id" IS NULL AND "expense_payment_methods"."payment_method_id" = 2 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Картка' AND "payment_methods"."id" != 2 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (70.4ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Транспорт' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = '' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (1.9ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (0.3ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (0.4ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (0.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Load (0.5ms)[0m  [1m[34mSELECT "payment_methods".* FROM "payment_methods" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" IS NULL AND "expense_categories"."category_id" IS NULL LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (1.1ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (1.7ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" IS NULL AND "expense_categories"."category_id" IS NULL LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (0.3ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.5ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+Migrating to CreateSpenders (20250517152210)
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (90.4ms)[0m  [1m[35mCREATE TABLE "spenders" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250517152210') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (174.5ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+Migrating to AddSpenderToExpenses (20250517153757)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.9ms)[0m  [1m[32mINSERT INTO "aexpenses" ("id","amount","date","description","created_at","updated_at")
+                     SELECT "id","amount","date","description","created_at","updated_at" FROM "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "expenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "spender_id" integer NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "expenses" ("id","amount","date","description","created_at","updated_at")
+                     SELECT "id","amount","date","description","created_at","updated_at" FROM "aexpenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE "aexpenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_expenses_on_spender_id" ON "expenses" ("spender_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "spender_id" integer NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "tindex_aexpenses_on_spender_id" ON "aexpenses" ("spender_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "aexpenses" ("id","amount","date","description","created_at","updated_at","spender_id")
+                     SELECT "id","amount","date","description","created_at","updated_at","spender_id" FROM "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "expenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "spender_id" integer NOT NULL, CONSTRAINT "fk_rails_36fa3cb791"
+FOREIGN KEY ("spender_id")
+  REFERENCES "spenders" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_expenses_on_spender_id" ON "expenses" ("spender_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "expenses" ("id","amount","date","description","created_at","updated_at","spender_id")
+                     SELECT "id","amount","date","description","created_at","updated_at","spender_id" FROM "aexpenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE "aexpenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250517153757') RETURNING "version" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (150.9ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (172.6ms)[0m  [1m[35mCREATE TABLE "categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "expense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE TABLE "expense_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_category_id" ON "expense_categories" ("category_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_expense_id" ON "expense_categories" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "expense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "expense_payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "payment_method_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_expense_id" ON "expense_payment_methods" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_payment_method_id" ON "expense_payment_methods" ("payment_method_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE IF EXISTS "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE TABLE "expenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "spender_id" integer NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_expenses_on_spender_id" ON "expenses" ("spender_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "spenders" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "spenders" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (14.0ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpense_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_categories_on_expense_id" ON "aexpense_categories" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_categories_on_category_id" ON "aexpense_categories" ("category_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "aexpense_categories" ("id","expense_id","category_id","created_at","updated_at")
+                     SELECT "id","expense_id","category_id","created_at","updated_at" FROM "expense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE "expense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "expense_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_3a19ecf141"
+FOREIGN KEY ("category_id")
+  REFERENCES "categories" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_category_id" ON "expense_categories" ("category_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_expense_id" ON "expense_categories" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "expense_categories" ("id","expense_id","category_id","created_at","updated_at")
+                     SELECT "id","expense_id","category_id","created_at","updated_at" FROM "aexpense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.7ms)[0m  [1m[35mDROP TABLE "aexpense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (10.9ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpense_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_categories_on_expense_id" ON "aexpense_categories" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_categories_on_category_id" ON "aexpense_categories" ("category_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "aexpense_categories" ("id","expense_id","category_id","created_at","updated_at")
+                     SELECT "id","expense_id","category_id","created_at","updated_at" FROM "expense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.9ms)[0m  [1m[35mDROP TABLE "expense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "expense_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_3a19ecf141"
+FOREIGN KEY ("category_id")
+  REFERENCES "categories" ("id")
+, CONSTRAINT "fk_rails_10ea622141"
+FOREIGN KEY ("expense_id")
+  REFERENCES "expenses" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_category_id" ON "expense_categories" ("category_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_expense_categories_on_expense_id" ON "expense_categories" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "expense_categories" ("id","expense_id","category_id","created_at","updated_at")
+                     SELECT "id","expense_id","category_id","created_at","updated_at" FROM "aexpense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mDROP TABLE "aexpense_categories" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (9.8ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpense_payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "payment_method_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_payment_methods_on_payment_method_id" ON "aexpense_payment_methods" ("payment_method_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_payment_methods_on_expense_id" ON "aexpense_payment_methods" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "aexpense_payment_methods" ("id","expense_id","payment_method_id","created_at","updated_at")
+                     SELECT "id","expense_id","payment_method_id","created_at","updated_at" FROM "expense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE "expense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "expense_payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "payment_method_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_80a16696a5"
+FOREIGN KEY ("expense_id")
+  REFERENCES "expenses" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_expense_id" ON "expense_payment_methods" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_payment_method_id" ON "expense_payment_methods" ("payment_method_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "expense_payment_methods" ("id","expense_id","payment_method_id","created_at","updated_at")
+                     SELECT "id","expense_id","payment_method_id","created_at","updated_at" FROM "aexpense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mDROP TABLE "aexpense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (8.7ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpense_payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "payment_method_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_payment_methods_on_payment_method_id" ON "aexpense_payment_methods" ("payment_method_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "tindex_aexpense_payment_methods_on_expense_id" ON "aexpense_payment_methods" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "aexpense_payment_methods" ("id","expense_id","payment_method_id","created_at","updated_at")
+                     SELECT "id","expense_id","payment_method_id","created_at","updated_at" FROM "expense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE "expense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "expense_payment_methods" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "expense_id" integer NOT NULL, "payment_method_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_80a16696a5"
+FOREIGN KEY ("expense_id")
+  REFERENCES "expenses" ("id")
+, CONSTRAINT "fk_rails_24b4df27eb"
+FOREIGN KEY ("payment_method_id")
+  REFERENCES "payment_methods" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_expense_id" ON "expense_payment_methods" ("expense_id") /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_expense_payment_methods_on_payment_method_id" ON "expense_payment_methods" ("payment_method_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "expense_payment_methods" ("id","expense_id","payment_method_id","created_at","updated_at")
+                     SELECT "id","expense_id","payment_method_id","created_at","updated_at" FROM "aexpense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE "aexpense_payment_methods" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (9.6ms)[0m  [1m[35mPRAGMA foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = OFF /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aexpenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "spender_id" integer NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "tindex_aexpenses_on_spender_id" ON "aexpenses" ("spender_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "aexpenses" ("id","amount","date","description","created_at","updated_at","spender_id")
+                     SELECT "id","amount","date","description","created_at","updated_at","spender_id" FROM "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mDROP TABLE "expenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "expenses" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "amount" decimal, "date" date, "description" text, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "spender_id" integer NOT NULL, CONSTRAINT "fk_rails_36fa3cb791"
+FOREIGN KEY ("spender_id")
+  REFERENCES "spenders" ("id")
+) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_expenses_on_spender_id" ON "expenses" ("spender_id") /*application='ExpenseManager'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "expenses" ("id","amount","date","description","created_at","updated_at","spender_id")
+                     SELECT "id","amount","date","description","created_at","updated_at","spender_id" FROM "aexpenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE "aexpenses" /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0 /*application='ExpenseManager'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20250517153757) /*application='ExpenseManager'*/[0m
+  [1m[35m (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20250517152210),
+(20250513193527),
+(20250513193449),
+(20250513185453),
+(20250513185424),
+(20250513184856); /*application='ExpenseManager'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL) /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.4ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-05-17 15:51:40.095624', '2025-05-17 15:51:40.095630') RETURNING "key" /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'schema_sha1' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.3ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('schema_sha1', 'dc7e13a4327cdd8db50a072068916f0be763cbf1', '2025-05-17 15:51:40.152954', '2025-05-17 15:51:40.152959') RETURNING "key" /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (22.6ms)[0m  [1m[34mSELECT "categories".* FROM "categories" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (0.4ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.3ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Exists? (32.1ms)[0m  [1m[34mSELECT 1 AS one FROM "spenders" WHERE "spenders"."name" = 'Стефан' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Create (124.1ms)[0m  [1m[32mINSERT INTO "spenders" ("name", "created_at", "updated_at") VALUES ('Стефан', '2025-05-17 17:09:37.558168', '2025-05-17 17:09:37.558168') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (181.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Exists? (2.0ms)[0m  [1m[34mSELECT 1 AS one FROM "spenders" WHERE "spenders"."name" = 'Оля' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Create (0.4ms)[0m  [1m[32mINSERT INTO "spenders" ("name", "created_at", "updated_at") VALUES ('Оля', '2025-05-17 17:09:52.506916', '2025-05-17 17:09:52.506916') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (2.3ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Create (0.5ms)[0m  [1m[32mINSERT INTO "categories" ("name", "created_at", "updated_at") VALUES ('Їжа', '2025-05-17 17:10:23.479908', '2025-05-17 17:10:23.479908') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (2.2ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Транспорт' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Create (0.5ms)[0m  [1m[32mINSERT INTO "categories" ("name", "created_at", "updated_at") VALUES ('Транспорт', '2025-05-17 17:10:35.823822', '2025-05-17 17:10:35.823822') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (356.3ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Create (0.4ms)[0m  [1m[32mINSERT INTO "payment_methods" ("name", "created_at", "updated_at") VALUES ('Готівка', '2025-05-17 17:11:00.586010', '2025-05-17 17:11:00.586010') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (2.5ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Картка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Create (0.3ms)[0m  [1m[32mINSERT INTO "payment_methods" ("name", "created_at", "updated_at") VALUES ('Картка', '2025-05-17 17:11:05.396109', '2025-05-17 17:11:05.396109') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.4ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Оля' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (0.3ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Load (0.3ms)[0m  [1m[34mSELECT "payment_methods".* FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (0.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories" WHERE "categories"."name" = 'Їжа' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Load (0.4ms)[0m  [1m[34mSELECT "payment_methods".* FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.4ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Оля' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (27.8ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" WHERE "expenses"."spender_id" = 2 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (0.5ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" WHERE "expenses"."spender_id" = 2 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.4ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Оля' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.3ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Оля' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.5ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Оля' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (2.3ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" IS NULL AND "expense_categories"."category_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Їжа' AND "categories"."id" != 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_payment_methods" WHERE "expense_payment_methods"."expense_id" IS NULL AND "expense_payment_methods"."payment_method_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' AND "payment_methods"."id" != 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Create (0.5ms)[0m  [1m[32mINSERT INTO "expenses" ("amount", "date", "description", "created_at", "updated_at", "spender_id") VALUES (1500.0, '2025-05-17', 'Покупка продуктів', '2025-05-17 17:26:52.796640', '2025-05-17 17:26:52.796640', 2) RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (0.4ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" = 1 AND "expense_categories"."category_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Create (0.4ms)[0m  [1m[32mINSERT INTO "expense_categories" ("expense_id", "category_id", "created_at", "updated_at") VALUES (1, 1, '2025-05-17 17:26:52.807723', '2025-05-17 17:26:52.807723') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Exists? (0.3ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_payment_methods" WHERE "expense_payment_methods"."expense_id" = 1 AND "expense_payment_methods"."payment_method_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Create (0.4ms)[0m  [1m[32mINSERT INTO "expense_payment_methods" ("expense_id", "payment_method_id", "created_at", "updated_at") VALUES (1, 1, '2025-05-17 17:26:52.817941', '2025-05-17 17:26:52.817941') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (0.3ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (4.3ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Load (0.5ms)[0m  [1m[34mSELECT "expense_categories".* FROM "expense_categories" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Load (132.7ms)[0m  [1m[34mSELECT "expenses".* FROM "expenses" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (1.9ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Ігри' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Create (0.8ms)[0m  [1m[32mINSERT INTO "categories" ("name", "created_at", "updated_at") VALUES ('Ігри', '2025-05-19 05:31:00.091067', '2025-05-19 05:31:00.091067') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (71.6ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Load (0.5ms)[0m  [1m[34mSELECT "payment_methods".* FROM "payment_methods" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.4ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" /* loading for pp */ LIMIT 11 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.4ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Стефан' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mSpender Load (0.5ms)[0m  [1m[34mSELECT "spenders".* FROM "spenders" WHERE "spenders"."name" = 'Стефан' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Load (0.6ms)[0m  [1m[34mSELECT "payment_methods".* FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (2.3ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" IS NULL AND "expense_categories"."category_id" = 3 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "categories" WHERE "categories"."name" = 'Ігри' AND "categories"."id" != 3 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_payment_methods" WHERE "expense_payment_methods"."expense_id" IS NULL AND "expense_payment_methods"."payment_method_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mPaymentMethod Exists? (0.2ms)[0m  [1m[34mSELECT 1 AS one FROM "payment_methods" WHERE "payment_methods"."name" = 'Готівка' AND "payment_methods"."id" != 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpense Create (0.7ms)[0m  [1m[32mINSERT INTO "expenses" ("amount", "date", "description", "created_at", "updated_at", "spender_id") VALUES (100.0, '2025-05-18', 'Оплата за нову гру', '2025-05-19 05:33:57.936198', '2025-05-19 05:33:57.936198', 1) RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_categories" WHERE "expense_categories"."expense_id" = 2 AND "expense_categories"."category_id" = 3 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpenseCategory Create (1.1ms)[0m  [1m[32mINSERT INTO "expense_categories" ("expense_id", "category_id", "created_at", "updated_at") VALUES (2, 3, '2025-05-19 05:33:57.950948', '2025-05-19 05:33:57.950948') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Exists? (20.3ms)[0m  [1m[34mSELECT 1 AS one FROM "expense_payment_methods" WHERE "expense_payment_methods"."expense_id" = 2 AND "expense_payment_methods"."payment_method_id" = 1 LIMIT 1 /*application='ExpenseManager'*/[0m
+  [1m[36mExpensePaymentMethod Create (0.5ms)[0m  [1m[32mINSERT INTO "expense_payment_methods" ("expense_id", "payment_method_id", "created_at", "updated_at") VALUES (2, 1, '2025-05-19 05:33:57.987076', '2025-05-19 05:33:57.987076') RETURNING "id" /*application='ExpenseManager'*/[0m
+  [1m[36mTRANSACTION (1.3ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='ExpenseManager'*/[0m
+  [1m[36mCategory Delete All (4.9ms)[0m  [1m[31mDELETE FROM "categories" WHERE "categories"."name" = 'Ігри' /*application='ExpenseManager'*/[0m
