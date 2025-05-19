@@ -1,0 +1,47 @@
+<div class="card">
+  <div class="card-header">
+    <h1>Деталі платника</h1>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">Ім'я:</dt>
+      <dd class="col-sm-9"><%= @spender.name %></dd>
+      
+      <dt class="col-sm-3">Витрати:</dt>
+      <dd class="col-sm-9">
+        <% if @spender.expenses.any? %>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Сума</th>
+                <th>Опис</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @spender.expenses.each do |expense| %>
+                <tr>
+                  <td><%= expense.date.strftime("%d.%m.%Y") %></td>
+                  <td><%= number_to_currency(expense.amount, unit: "₴") %></td>
+                  <td><%= link_to truncate(expense.description, length: 30), expense %></td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="2">Загальна сума:</th>
+                <td><%= number_to_currency(@spender.expenses.sum(:amount), unit: "₴") %></td>
+              </tr>
+            </tfoot>
+          </table>
+        <% else %>
+          <p>Цей платник ще не має витрат.</p>
+        <% end %>
+      </dd>
+    </dl>
+  </div>
+  <div class="card-footer">
+    <%= link_to "Редагувати", edit_spender_path(@spender), class: "btn btn-warning" %>
+    <%= link_to "Назад", spenders_path, class: "btn btn-secondary" %>
+  </div>
+</div>

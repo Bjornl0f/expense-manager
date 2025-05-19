@@ -1,0 +1,15 @@
+<div class="card">
+  <div class="card-header">
+    <h1>Деталі категорії</h1>
+  </div>
+  <div class="card-body">
+    <dl class="row">
+      <dt class="col-sm-3">Назва:</dt>
+      <dd class="col-sm-9"><%= @category.name %></dd>
+    </dl>
+  </div>
+  <div class="card-footer">
+    <%= link_to "Редагувати", edit_category_path(@category), class: "btn btn-warning" %>
+    <%= link_to "Назад", categories_path, class: "btn btn-secondary" %>
+  </div>
+</div>

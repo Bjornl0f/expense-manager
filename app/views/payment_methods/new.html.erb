@@ -1,0 +1,11 @@
+<div class="card">
+  <div class="card-header">
+    <h1>Новий спосіб оплати</h1>
+  </div>
+  <div class="card-body">
+    <%= render 'form', payment_method: @payment_method %>
+  </div>
+  <div class="card-footer">
+    <%= link_to "Назад", payment_methods_path, class: "btn btn-secondary" %>
+  </div>
+</div>

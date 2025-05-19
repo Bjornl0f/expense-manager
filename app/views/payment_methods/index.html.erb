@@ -1,0 +1,30 @@
+<h1>Способи оплати</h1>
+
+<div class="mb-3">
+  <%= link_to "Новий спосіб оплати", new_payment_method_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Назва</th>
+          <th>Дії</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payment_methods.each do |payment_method| %>
+          <tr>
+            <td><%= payment_method.name %></td>
+            <td>
+              <%= link_to "Детальніше", payment_method, class: "btn btn-sm btn-info" %>
+              <%= link_to "Редагувати", edit_payment_method_path(payment_method), class: "btn btn-sm btn-warning" %>
+              <%= link_to "Видалити", payment_method, method: :delete, data: { turbo_method: :delete, turbo_confirm: "Ви впевнені?" }, class: "btn btn-sm btn-danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
