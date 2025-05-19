@@ -1,12 +1,12 @@
 <div class="card">
   <div class="card-header">
-    <h1>Редагування категорії</h1>
+    <h1><%= t('categories.edit')%></h1>
   </div>
   <div class="card-body">
     <%= render 'form', category: @category %>
   </div>
   <div class="card-footer">
-    <%= link_to "Показати", @category, class: "btn btn-info" %>
-    <%= link_to "Назад", categories_path, class: "btn btn-secondary" %>
+    <%= link_to t('common.show'), @category, class: "btn btn-info" %>
+    <%= link_to t('common.back'), categories_path, class: "btn btn-secondary" %>
   </div>
 </div>

@@ -1,0 +1,156 @@
+# config/locales/uk.yml
+uk:
+  app_name: "Менеджер витрат"
+  
+  language:
+    uk: "Українська"
+    en: "English"
+  
+  menu:
+    expenses: "Витрати"
+    spenders: "Платники"
+    categories: "Категорії"
+    payment_methods: "Способи оплати"
+    import_export: "Імпорт/Експорт"
+  
+  users:
+    login: "Увійти"
+    logout: "Вийти"
+    register: "Зареєструватися"
+    profile: "Профіль"
+  
+  expenses:
+    created: "Витрату успішно створено."
+    updated: "Витрату успішно оновлено."
+    destroyed: "Витрату успішно видалено."
+    new: "Нова витрата"
+    edit: "Редагування витрати"
+    index: "Витрати"
+    show: "Деталі витрати"
+    amount: "Сума"
+    date: "Дата"
+    description: "Опис"
+    spender: "Платник"
+    categories: "Категорії"
+    payment_methods: "Способи оплати"
+    actions: "Дії"
+    search: "Пошук витрат..."
+    all_spenders: "Всі платники"
+    all_categories: "Всі категорії"
+    all_payment_methods: "Всі способи оплати"
+    no_expenses: "Не знайдено жодної витрати"
+    undefined: "Не вказано"
+  
+  spenders:
+    created: "Платника успішно створено."
+    updated: "Платника успішно оновлено."
+    destroyed: "Платника успішно видалено."
+    new: "Новий платник"
+    edit: "Редагування платника"
+    index: "Платники"
+    show: "Деталі платника"
+    name: "Ім'я"
+    actions: "Дії"
+    search: "Пошук платників..."
+    no_spenders: "Не знайдено жодного платника"
+    no_expenses: "Цей платник ще не має витрат"
+    expense_stats: "Статистика витрат:"
+    expense_count: "Кількість витрат"
+    total_sum: "Загальна сума"
+
+  categories:
+    created: "Категорію успішно створено."
+    updated: "Категорію успішно оновлено."
+    destroyed: "Категорію успішно видалено."
+    new: "Нова категорія"
+    edit: "Редагування категорії"
+    index: "Категорії"
+    show: "Деталі категорії"
+    name: "Назва"
+    actions: "Дії"
+    search: "Пошук категорій..."
+    no_categories: "Не знайдено жодної категорії"
+  
+  payment_methods:
+    created: "Спосіб оплати успішно створено."
+    updated: "Спосіб оплати успішно оновлено."
+    destroyed: "Спосіб оплати успішно видалено."
+    new: "Новий спосіб оплати"
+    edit: "Редагування способу оплати"
+    index: "Способи оплати"
+    show: "Деталі способу оплати"
+    name: "Назва"
+    actions: "Дії"
+    search: "Пошук способів оплати..."
+    no_payment_methods: "Не знайдено жодного способу оплати"
+  
+  import_export:
+    title: "Імпорт/Експорт"
+    import: "Імпорт"
+    export: "Експорт"
+    select_file: "Виберіть файл"
+    import_button: "Імпортувати"
+    export_json: "Експорт в JSON"
+    export_yaml: "Експорт в YAML"
+    imported: "Дані успішно імпортовано"
+    no_file: "Виберіть файл для імпорту"
+    unsupported_format: "Підтримуються лише файли JSON або YAML"
+  
+  common:
+    show: "Детальніше"
+    edit: "Редагувати"
+    delete: "Видалити"
+    back: "Назад"
+    save: "Зберегти"
+    search: "Пошук"
+    reset: "Скинути"
+    confirmation: "Ви впевнені?"
+    sort_by: "Сортувати за:"
+  
+  errors:
+    messages:
+      at_least_one_category: "повинна бути вказана хоча б одна категорія"
+      at_least_one_payment_method: "повинен бути вказаний хоча б один спосіб оплати"
+      error: "Помилка"
+
+  helpers:
+    submit:
+      create: "Створити %{model}"
+      update: "Оновити %{model}"
+  
+  activerecord:
+    models:
+      expense: "Витрата"
+      spender: "Платник"
+      category: "Категорія"
+      payment_method: "Спосіб оплати"
+      user: "Користувач"
+    attributes:
+      expense:
+        amount: "Сума"
+        date: "Дата"
+        description: "Опис"
+        spender: "Платник"
+        categories: "Категорії"
+        payment_methods: "Способи оплати"
+      spender:
+        name: "Ім'я"
+      category:
+        name: "Назва"
+      payment_method:
+        name: "Назва"
+      user:
+        email: "Електронна пошта"
+        password: "Пароль"
+        password_confirmation: "Підтвердження пароля"
+        current_password: "Поточний пароль"
+        remember_me: "Запам'ятати мене"
+        name: "Ім'я"
+  
+  views:
+    pagination:
+      first: "&laquo; Перша"
+      last: "Остання &raquo;"
+      previous: "&lsaquo; Попередня"
+      next: "Наступна &rsaquo;"
+      truncate: "&hellip;"

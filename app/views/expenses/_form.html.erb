@@ -11,22 +11,22 @@
   <% end %>
 
   <div class="mb-3">
-    <%= form.label :date, "Дата", class: "form-label" %>
+    <%= form.label :date, t('expenses.date'), class: "form-label" %>
     <%= form.date_field :date, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :amount, "Сума", class: "form-label" %>
+    <%= form.label :amount, t('expenses.amount'), class: "form-label" %>
     <%= form.number_field :amount, step: 0.01, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :description, "Опис", class: "form-label" %>
+    <%= form.label :description, t('expenses.description'), class: "form-label" %>
     <%= form.text_area :description, class: "form-control", rows: 3 %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :spender_id, "Платник", class: "form-label" %>
+    <%= form.label :spender_id, t('expenses.spender'), class: "form-label" %>
     <div class="form-control" style="height: auto; padding: 10px;">
       <% @spenders.each do |spender| %>
         <div class="form-check">
@@ -38,7 +38,7 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :category_ids, "Категорії", class: "form-label" %>
+    <%= form.label :category_ids, t('expenses.categories'), class: "form-label" %>
     <div class="form-control" style="height: auto; padding: 10px;">
       <% @categories.each do |category| %>
         <div class="form-check">
@@ -50,7 +50,7 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :payment_method_ids, "Способи оплати", class: "form-label" %>
+    <%= form.label :payment_method_ids, t('expenses.payment_methods'), class: "form-label" %>
     <div class="form-control" style="height: auto; padding: 10px;">
       <% @payment_methods.each do |payment_method| %>
         <div class="form-check">
@@ -62,6 +62,6 @@
   </div>
 
   <div class="mb-3">
-    <%= form.submit "Зберегти", class: "btn btn-primary" %>
+    <%= form.submit t('common.save'), class: "btn btn-primary" %>
   </div>
 <% end %>

@@ -2,7 +2,7 @@ class SpendersController < ApplicationController
   before_action :set_spender, only: [:show, :edit, :update, :destroy]
 
   def index
-    @spenders = Spender.all
+    @spenders = current_user.spenders
 
     # Пошук
     if params[:search].present?
@@ -32,17 +32,17 @@ class SpendersController < ApplicationController
   end
 
   def new
-    @spender = Spender.new
+    @spender = current_user.spenders.build
   end
 
   def edit
   end
 
   def create
-    @spender = Spender.new(spender_params)
+    @spender = current_user.spenders.build(spender_params)
 
     if @spender.save
-      redirect_to @spender, notice: 'Платника успішно створено.'
+      redirect_to @spender, notice: t('spenders.created')
     else
       render :new, status: :unprocessable_entity
     end
@@ -50,7 +50,7 @@ class SpendersController < ApplicationController
 
   def update
     if @spender.update(spender_params)
-      redirect_to @spender, notice: 'Платника успішно оновлено.'
+      redirect_to @spender, notice: t('spenders.updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -58,12 +58,12 @@ class SpendersController < ApplicationController
 
   def destroy
     @spender.destroy
-    redirect_to spenders_path, notice: 'Платника успішно видалено.'
+    redirect_to spenders_path, notice: t('spenders.deleted')
   end
 
   private
     def set_spender
-      @spender = Spender.find(params[:id])
+      @spender = current_user.spenders.find(params[:id])
     end
 
     def spender_params

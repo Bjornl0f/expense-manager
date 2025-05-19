@@ -2,7 +2,7 @@ class PaymentMethodsController < ApplicationController
   before_action :set_payment_method, only: [:show, :edit, :update, :destroy]
 
   def index
-    @payment_methods = PaymentMethod.all
+    @payment_methods = current_user.payment_methods
     
     # Пошук
     if params[:search].present?
@@ -23,17 +23,17 @@ class PaymentMethodsController < ApplicationController
   end
 
   def new
-    @payment_method = PaymentMethod.new
+    @payment_method = current_user.payment_methods.build
   end
 
   def edit
   end
 
   def create
-    @payment_method = PaymentMethod.new(payment_method_params)
+    @payment_method = current_user.payment_methods.build(payment_method_params)
 
     if @payment_method.save
-      redirect_to @payment_method, notice: 'Спосіб оплати успішно створено.'
+      redirect_to @payment_method, notice: t('payment_methods.created')
     else
       render :new, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class PaymentMethodsController < ApplicationController
 
   def update
     if @payment_method.update(payment_method_params)
-      redirect_to @payment_method, notice: 'Спосіб оплати успішно оновлено.'
+      redirect_to @payment_method, notice: t('payment_methods.updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -49,12 +49,12 @@ class PaymentMethodsController < ApplicationController
 
   def destroy
     @payment_method.destroy
-    redirect_to payment_methods_path, notice: 'Спосіб оплати успішно видалено.'
+    redirect_to payment_methods_path, notice: t('payment_methods.destroyed')
   end
 
   private
     def set_payment_method
-      @payment_method = PaymentMethod.find(params[:id])
+      @payment_method = current_user.payment_methods.find(params[:id])
     end
 
     def payment_method_params

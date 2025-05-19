@@ -4,5 +4,5 @@ class ExpensePaymentMethod < ApplicationRecord
   belongs_to :payment_method
 
   # Валідації
-  validates :expense_id, uniqueness: { scope: :payment_method_id }
+  validates :expense, uniqueness: { scope: :payment_method }
 end

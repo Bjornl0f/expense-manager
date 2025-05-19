@@ -2,7 +2,7 @@ class CategoriesController < ApplicationController
   before_action :set_category, only: [:show, :edit, :update, :destroy]
 
   def index
-    @categories = Category.all
+    @categories = current_user.categories
     
     # Пошук
     if params[:search].present?
@@ -23,17 +23,17 @@ class CategoriesController < ApplicationController
   end
 
   def new
-    @category = Category.new
+    @category = current_user.categories.build
   end
 
   def edit
   end
 
   def create
-    @category = Category.new(category_params)
+    @category = current_user.categories.build(category_params)
 
     if @category.save
-      redirect_to @category, notice: 'Категорію успішно створено.'
+      redirect_to @category, notice: t('categories.created')
     else
       render :new, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class CategoriesController < ApplicationController
 
   def update
     if @category.update(category_params)
-      redirect_to @category, notice: 'Категорію успішно оновлено.'
+      redirect_to @category, notice: t('categories.updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -49,12 +49,12 @@ class CategoriesController < ApplicationController
 
   def destroy
     @category.destroy
-    redirect_to categories_path, notice: 'Категорію успішно видалено.'
+    redirect_to categories_path, notice: t('categories.destroyed')
   end
 
   private
     def set_category
-      @category = Category.find(params[:id])
+      @category = current_user.categories.find(params[:id])
     end
 
     def category_params

@@ -1,5 +1,6 @@
 class Expense < ApplicationRecord
   # Зв'язки
+  belongs_to :user
   has_many :expense_categories, dependent: :destroy
   has_many :categories, through: :expense_categories
   
@@ -20,13 +21,13 @@ class Expense < ApplicationRecord
 
   def must_have_at_least_one_category
     if categories.empty?
-      errors.add(:categories, "повинна бути вказана хоча б одна категорія")
+      errors.add(:categories, I18n.t('errors.messages.at_least_one_category'))
     end
   end
 
   def must_have_at_least_one_payment_method
     if payment_methods.empty?
-      errors.add(:payment_methods, "повинен бути вказаний хоча б один спосіб оплати")
+      errors.add(:payment_methods, I18n.t('errors.messages.at_least_one_payment_method'))
     end
   end
 end

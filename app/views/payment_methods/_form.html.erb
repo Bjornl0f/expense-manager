@@ -11,11 +11,11 @@
   <% end %>
 
   <div class="mb-3">
-    <%= form.label :name, "Назва", class: "form-label" %>
+    <%= form.label :name, t('payment_methods.name'), class: "form-label" %>
     <%= form.text_field :name, class: "form-control" %>
   </div>
 
   <div class="mb-3">
-    <%= form.submit "Зберегти", class: "btn btn-primary" %>
+    <%= form.submit t('common.save'), class: "btn btn-primary" %>
   </div>
 <% end %>

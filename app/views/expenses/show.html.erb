@@ -1,29 +1,29 @@
 <div class="card">
   <div class="card-header">
-    <h1>Деталі витрати</h1>
+    <h1><%= t('expenses.show')%></h1>
   </div>
   <div class="card-body">
     <dl class="row">
-      <dt class="col-sm-3">Дата:</dt>
+      <dt class="col-sm-3"><%= t('expenses.date')%>:</dt>
       <dd class="col-sm-9"><%= @expense.date.strftime("%d.%m.%Y") %></dd>
 
-      <dt class="col-sm-3">Сума:</dt>
+      <dt class="col-sm-3"><%= t('expenses.amount')%>:</dt>
       <dd class="col-sm-9"><%= number_to_currency(@expense.amount, unit: "₴") %></dd>
 
-      <dt class="col-sm-3">Опис:</dt>
+      <dt class="col-sm-3"><%= t('expenses.description')%>:</dt>
       <dd class="col-sm-9"><%= @expense.description %></dd>
 
-      <dt class="col-sm-3">Платник:</dt>
-      <dd class="col-sm-9""><span class="badge bg-primary"><%= expense.spender.name %></span></dd>
+      <dt class="col-sm-3"><%= t('expenses.spender')%></dt>
+      <dd class="col-sm-9""><span class="badge bg-primary"><%= @expense.spender.name %></span></dd>
 
-      <dt class="col-sm-3">Категорії:</dt>
+      <dt class="col-sm-3"><%= t('expenses.categories')%>:</dt>
       <dd class="col-sm-9">
         <% @expense.categories.each do |category| %>
           <span class="badge bg-info"><%= category.name %></span>
         <% end %>
       </dd>
 
-      <dt class="col-sm-3">Способи оплати:</dt>
+      <dt class="col-sm-3"><%= t('expenses.payment_methods')%>:</dt>
       <dd class="col-sm-9">
         <% @expense.payment_methods.each do |payment_method| %>
           <span class="badge bg-secondary"><%= payment_method.name %></span>
@@ -32,7 +32,7 @@
     </dl>
   </div>
   <div class="card-footer">
-    <%= link_to "Редагувати", edit_expense_path(@expense), class: "btn btn-warning" %>
-    <%= link_to "Назад", expenses_path, class: "btn btn-secondary" %>
+    <%= link_to t('common.edit'), edit_expense_path(@expense), class: "btn btn-warning" %>
+    <%= link_to t('common.back'), expenses_path, class: "btn btn-secondary" %>
   </div>
 </div>

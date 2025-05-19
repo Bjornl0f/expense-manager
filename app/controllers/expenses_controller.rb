@@ -3,32 +3,32 @@ class ExpensesController < ApplicationController
   before_action :set_collections, only: [:new, :edit, :create, :update]
 
   def index
-    @expenses = Expense.all
+    @expenses = current_user.expenses
 
     # Пошук
     if params[:search].present?
       search_term = "%#{params[:search]}%"
       @expenses = @expenses.where("description LIKE ?", search_term)
-                           .or(Expense.where(id: Category.where("name LIKE ?", search_term)
+                           .or(current_user.expenses.where(id: current_user.categories.where("name LIKE ?", search_term)
                            .joins(:expenses).select(:expense_id)))
-                           .or(Expense.where(id: PaymentMethod.where("name LIKE ?", search_term)
+                           .or(current_user.expenses.where(id: current_user.payment_methods.where("name LIKE ?", search_term)
                            .joins(:expenses).select(:expense_id)))
-                           .or(Expense.joins(:spender).where("spenders.name LIKE ?", search_term))
+                           .or(current_user.expenses.joins(:spender).where("spenders.name LIKE ?", search_term))
     end
     
     # Фільтр за категорією
     if params[:category_id].present?
-      @expenses = @expenses.joins(:categories).where(categories: { id: params[:category_id] })
+      @expenses = @expenses.joins(:categories).where(categories: { id: params[:category_id], user_id: current_user.id })
     end
     
     # Фільтр за способом оплати
     if params[:payment_method_id].present?
-      @expenses = @expenses.joins(:payment_methods).where(payment_methods: { id: params[:payment_method_id] })
+      @expenses = @expenses.joins(:payment_methods).where(payment_methods: { id: params[:payment_method_id], user_id: current_user.id })
     end
-    
+
     # Фільтр за платником
     if params[:spender_id].present?
-      @expenses = @expenses.where(spender_id: params[:spender_id])
+      @expenses = @expenses.where(spender_id: params[:spender_id], user_id: current_user.id )
     end
     
     # Сортування
@@ -44,17 +44,17 @@ class ExpensesController < ApplicationController
   end
 
   def new
-    @expense = Expense.new
+    @expense = current_user.expenses.build
   end
 
   def edit
   end
 
   def create
-    @expense = Expense.new(expense_params)
+    @expense = current_user.expenses.build(expense_params)
 
     if @expense.save
-      redirect_to @expense, notice: 'Витрату успішно створено.'
+      redirect_to @expense, notice: t('expenses.created')
     else
       render :new, status: :unprocessable_entity
     end
@@ -62,7 +62,7 @@ class ExpensesController < ApplicationController
 
   def update
     if @expense.update(expense_params)
-      redirect_to @expense, notice: 'Витрату успішно оновлено.'
+      redirect_to @expense, notice: t('expenses.updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -70,18 +70,18 @@ class ExpensesController < ApplicationController
 
   def destroy
     @expense.destroy
-    redirect_to expenses_path, notice: 'Витрату успішно видалено.'
+    redirect_to expenses_path, notice: t('expenses.destroyed')
   end
 
   private
     def set_expense
-      @expense = Expense.find(params[:id])
+      @expense = current_user.expenses.find(params[:id])
     end
 
     def set_collections
-      @categories = Category.all
-      @payment_methods = PaymentMethod.all
-      @spenders = Spender.all
+      @spenders = current_user.spenders
+      @categories = current_user.categories
+      @payment_methods = current_user.payment_methods
     end
 
     def expense_params

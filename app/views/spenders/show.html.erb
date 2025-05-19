@@ -1,19 +1,19 @@
 <div class="card">
   <div class="card-header">
-    <h1>Деталі платника</h1>
+    <h1><%= t('spenders.show')%></h1>
   </div>
   <div class="card-body">
     <dl class="row">
-      <dt class="col-sm-3">Ім'я:</dt>
+      <dt class="col-sm-3"><%= t('spenders.name')%></dt>
       <dd class="col-sm-9"><%= @spender.name %></dd>
       
-      <dt class="col-sm-3">Статистика витрат:</dt>
+      <dt class="col-sm-3"><%= t('spenders.expense_stats')%></dt>
       <dd class="col-sm-9">
         <div class="row mb-3">
           <div class="col-md-4">
             <div class="card bg-info text-white">
               <div class="card-body">
-                <h5 class="card-title">Кількість витрат</h5>
+                <h5 class="card-title"><%= t('spenders.expense_count')%></h5>
                 <p class="card-text display-6"><%= @expenses.total_count %></p>
               </div>
             </div>
@@ -21,7 +21,7 @@
           <div class="col-md-4">
             <div class="card bg-success text-white">
               <div class="card-body">
-                <h5 class="card-title">Загальна сума</h5>
+                <h5 class="card-title"><%= t('spenders.total_sum')%></h5>
                 <p class="card-text display-6"><%= number_to_currency(@spender.expenses.sum(:amount), unit: "₴") %></p>
               </div>
             </div>
@@ -29,14 +29,14 @@
         </div>
       </dd>
       
-      <dt class="col-sm-3">Витрати:</dt>
+      <dt class="col-sm-3"><%= t('expenses.index')%>:</dt>
       <dd class="col-sm-9">
         <div class="mb-3 d-flex justify-content-end">
           <div>
-            <span>Сортувати за: </span>
-            <%= link_to "Датою", spender_path(@spender, sort: "date", direction: params[:direction] == "asc" && params[:sort] == "date" ? "desc" : "asc"), class: "btn btn-sm #{params[:sort] == 'date' ? 'btn-info' : 'btn-outline-info'}" %>
-            <%= link_to "Сумою", spender_path(@spender, sort: "amount", direction: params[:direction] == "asc" && params[:sort] == "amount" ? "desc" : "asc"), class: "btn btn-sm #{params[:sort] == 'amount' ? 'btn-info' : 'btn-outline-info'}" %>
-            <%= link_to "Описом", spender_path(@spender, sort: "description", direction: params[:direction] == "asc" && params[:sort] == "description" ? "desc" : "asc"), class: "btn btn-sm #{params[:sort] == 'description' ? 'btn-info' : 'btn-outline-info'}" %>
+            <span><%= t('common.sort_by')%> </span>
+            <%= link_to t('expenses.date'), spender_path(@spender, sort: "date", direction: params[:direction] == "asc" && params[:sort] == "date" ? "desc" : "asc"), class: "btn btn-sm #{params[:sort] == 'date' ? 'btn-info' : 'btn-outline-info'}" %>
+            <%= link_to t('expenses.amount'), spender_path(@spender, sort: "amount", direction: params[:direction] == "asc" && params[:sort] == "amount" ? "desc" : "asc"), class: "btn btn-sm #{params[:sort] == 'amount' ? 'btn-info' : 'btn-outline-info'}" %>
+            <%= link_to t('expenses.description'), spender_path(@spender, sort: "description", direction: params[:direction] == "asc" && params[:sort] == "description" ? "desc" : "asc"), class: "btn btn-sm #{params[:sort] == 'description' ? 'btn-info' : 'btn-outline-info'}" %>
           </div>
         </div>
         
@@ -44,11 +44,11 @@
           <table class="table table-sm table-striped">
             <thead>
               <tr>
-                <th>Дата</th>
-                <th>Сума</th>
-                <th>Опис</th>
-                <th>Категорії</th>
-                <th>Дії</th>
+                <th><%= t('expenses.date')%></th>
+                <th><%= t('expenses.amount')%></th>
+                <th><%= t('expenses.description')%></th>
+                <th><%= t('expenses.categories')%></th>
+                <th><%= t('expenses.actions')%></th>
               </tr>
             </thead>
             <tbody>
@@ -63,7 +63,7 @@
                     <% end %>
                   </td>
                   <td>
-                    <%= link_to "Детальніше", expense, class: "btn btn-sm btn-info" %>
+                    <%= link_to t('common.show'), expense, class: "btn btn-sm btn-info" %>
                   </td>
                 </tr>
               <% end %>
@@ -74,13 +74,13 @@
             <%= paginate @expenses %>
           </div>
         <% else %>
-          <p>Цей платник ще не має витрат.</p>
+          <p><%= t('spenders.no_expenses')%></p>
         <% end %>
       </dd>
     </dl>
   </div>
   <div class="card-footer">
-    <%= link_to "Редагувати", edit_spender_path(@spender), class: "btn btn-warning" %>
-    <%= link_to "Назад", spenders_path, class: "btn btn-secondary" %>
+    <%= link_to t('common.edit'), edit_spender_path(@spender), class: "btn btn-warning" %>
+    <%= link_to t('common.back'), spenders_path, class: "btn btn-secondary" %>
   </div>
 </div>

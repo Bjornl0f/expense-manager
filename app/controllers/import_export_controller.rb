@@ -26,7 +26,7 @@ class ImportExportController < ApplicationController
   # Імпорт з файлу
   def import
     if params[:file].nil?
-      redirect_to import_export_path, alert: 'Виберіть файл для імпорту'
+      redirect_to import_export_path, alert: t('import_export.no_file')
       return
     end
     
@@ -37,21 +37,21 @@ class ImportExportController < ApplicationController
     elsif params[:file].content_type == 'application/yaml' || params[:file].original_filename.end_with?('.yml', '.yaml')
       import_data(YAML.safe_load(file_content))
     else
-      redirect_to import_export_path, alert: 'Підтримуються лише файли JSON або YAML'
+      redirect_to import_export_path, alert: t('import_export.unsupported_format')
       return
     end
     
-    redirect_to expenses_path, notice: 'Дані успішно імпортовано'
+    redirect_to expenses_path, notice: t('import_export.imported')
   end
   
   private
   
   def prepare_export_data
     {
-      categories: Category.all.as_json(only: [:name]),
-      payment_methods: PaymentMethod.all.as_json(only: [:name]),
-      spenders: Spender.all.as_json(only: [:name]),
-      expenses: Expense.all.as_json(
+      categories: current_user.categories.as_json(only: [:name]),
+      payment_methods: current_user.payment_methods.as_json(only: [:name]),
+      spenders: current_user.spenders.as_json(only: [:name]),
+      expenses: current_user.expenses.as_json(
         only: [:amount, :date, :description],
         include: {
           categories: { only: [:name] },
@@ -66,41 +66,41 @@ class ImportExportController < ApplicationController
     # Спочатку імпортуємо категорії
     if data['categories'].present?
       data['categories'].each do |category_data|
-        Category.find_or_create_by!(name: category_data['name'])
+        current_user.categories.find_or_create_by!(name: category_data['name'])
       end
     end
     
     # Далі імпортуємо способи оплати
     if data['payment_methods'].present?
       data['payment_methods'].each do |payment_method_data|
-        PaymentMethod.find_or_create_by!(name: payment_method_data['name'])
+        current_user.payment_methods.find_or_create_by!(name: payment_method_data['name'])
       end
     end
 
     if data['spenders'].present?
       data['spenders'].each do |spender_data|
-        Spender.find_or_create_by!(name: spender_data['name'])
+        current_user.spenders.find_or_create_by!(name: spender_data['name'])
       end
     end
     
     # Тепер імпортуємо витрати
     if data['expenses'].present?
       data['expenses'].each do |expense_data|
-        expense = Expense.new(
+        expense = current_user.expenses.new(
           amount: expense_data['amount'],
           date: expense_data['date'],
           description: expense_data['description']
         )
 
         if expense_data.dig('spender', 'name').present?
-          spender = Spender.find_by!(name: expense_data['spender']['name'])
+          spender = current_user.spenders.find_by!(name: expense_data['spender']['name'])
           expense.spender = spender
         end
         
         # Додаємо категорії
         if expense_data['categories'].present?
           expense_data['categories'].each do |category_data|
-            category = Category.find_by(name: category_data['name'])
+            category = current_user.categories.find_by(name: category_data['name'])
             expense.categories << category if category.present?
           end
         end
@@ -108,7 +108,7 @@ class ImportExportController < ApplicationController
         # Додаємо способи оплати
         if expense_data['payment_methods'].present?
           expense_data['payment_methods'].each do |payment_method_data|
-            payment_method = PaymentMethod.find_by(name: payment_method_data['name'])
+            payment_method = current_user.payment_methods.find_by(name: payment_method_data['name'])
             expense.payment_methods << payment_method if payment_method.present?
           end
         end

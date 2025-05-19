@@ -1,0 +1,47 @@
+<div class="container py-4">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0"><%= t('users.register') %></h2>
+    </div>
+    <div class="card-body">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="mb-3">
+          <%= f.label :name, class: "form-label fw-bold" %>
+          <span class="text-danger">*</span>
+          <%= f.text_field :name, autofocus: true, class: "form-control", placeholder: "Ваше ім'я (мінімум 2 символи)" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :email, class: "form-label fw-bold" %>
+          <span class="text-danger">*</span>
+          <%= f.email_field :email, autocomplete: "email", class: "form-control", placeholder: "your.email@example.com" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :password, class: "form-label fw-bold" %>
+          <span class="text-danger">*</span>
+          <% if @minimum_password_length %>
+            <em class="text-muted">(<%= t('devise.registrations.minimum_password_length', count: @minimum_password_length) %>)</em>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :password_confirmation, class: "form-label fw-bold" %>
+          <span class="text-danger">*</span>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.submit t('users.register'), class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
+
+      <div class="mt-4">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>
